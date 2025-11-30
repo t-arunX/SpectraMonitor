@@ -1,9 +1,8 @@
 import { AppDefinition, Device, LogEntry, FeatureFlag } from '../types';
 import { io, Socket } from 'socket.io-client';
 
-const BACKEND_HOST = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
-const API_URL = `${BACKEND_HOST}/api`;
-const SOCKET_URL = BACKEND_HOST;
+const API_URL = '/api';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8080';
 
 class ApiClient {
   private socket: Socket | null = null;

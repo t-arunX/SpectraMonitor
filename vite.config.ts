@@ -13,6 +13,13 @@ export default defineConfig(({ mode }) => {
           host: process.env.REPLIT_DEV_DOMAIN,
           clientPort: 443,
         },
+        proxy: {
+          '/api': {
+            target: 'http://localhost:9090',
+            changeOrigin: true,
+          },
+        },
+        allowedHosts: true,
       },
       plugins: [react()],
       define: {
