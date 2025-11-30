@@ -153,6 +153,10 @@ const App: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleDeviceAdded = (newDevice: Device) => {
+    setDevices([...devices, newDevice]);
+  };
+
   const openProfile = () => {
       const id = 'profile_tab';
       if (!tabs.find(t => t.id === id)) {
@@ -274,8 +278,10 @@ const App: React.FC = () => {
          {selectedApp ? (
             <DeviceList 
             appName={selectedApp.name}
+            appId={selectedApp.id}
             devices={devices} 
-            onSelectDevice={handleDeviceSelect} 
+            onSelectDevice={handleDeviceSelect}
+            onDeviceAdded={handleDeviceAdded}
             className="h-full shadow-xl md:shadow-none"
             isLoading={isLoadingDevices}
             />

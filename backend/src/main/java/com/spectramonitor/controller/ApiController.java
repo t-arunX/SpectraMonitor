@@ -59,6 +59,23 @@ public class ApiController {
         return deviceRepository.findByAppId(appId);
     }
 
+    @PostMapping("/apps/{appId}/devices")
+    public ResponseEntity<Device> createDevice(@PathVariable String appId, @RequestBody Map<String, Object> body) {
+        Device device = new Device();
+        device.setId((String) body.getOrDefault("id", "device_" + System.currentTimeMillis()));
+        device.setAppId(appId);
+        device.setModel((String) body.getOrDefault("model", "Unknown"));
+        device.setOsVersion((String) body.getOrDefault("osVersion", "Unknown"));
+        device.setUserName((String) body.getOrDefault("userName", "Test User"));
+        device.setStatus((String) body.getOrDefault("status", "online"));
+        device.setLastSeen(new Date());
+        
+        Device savedDevice = deviceRepository.save(device);
+        socketIOServer.getBroadcastOperations().sendEvent("device:update", 
+            Map.of("id", device.getId(), "status", "online"));
+        return ResponseEntity.status(201).body(savedDevice);
+    }
+
     @GetMapping("/devices/{deviceId}")
     public ResponseEntity<Device> getDevice(@PathVariable String deviceId) {
         return deviceRepository.findByIdEquals(deviceId)

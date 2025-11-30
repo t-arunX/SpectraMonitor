@@ -43,6 +43,16 @@ class ApiClient {
     } catch (e) { return []; }
   }
 
+  async createDevice(appId: string, device: Partial<Device>): Promise<Device> {
+    const res = await fetch(`${API_URL}/apps/${appId}/devices`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(device)
+    });
+    if (!res.ok) throw new Error('Failed to create device');
+    return res.json();
+  }
+
   async getLogs(deviceId: string): Promise<LogEntry[]> {
     try {
       const res = await fetch(`${API_URL}/devices/${deviceId}/logs`);
