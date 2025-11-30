@@ -1,12 +1,12 @@
 package com.spectramonitor.controller;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.spectramonitor.model.*;
 import com.spectramonitor.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class ApiController {
     private CrashReportRepository crashReportRepository;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SocketIOServer socketIOServer;
 
     @GetMapping("/apps")
     public List<App> getApps() {
@@ -85,7 +85,7 @@ public class ApiController {
     @PostMapping("/flags")
     public FeatureFlag createFlag(@RequestBody FeatureFlag flag) {
         FeatureFlag savedFlag = featureFlagRepository.save(flag);
-        messagingTemplate.convertAndSend("/topic/flags", savedFlag);
+        socketIOServer.getBroadcastOperations().sendEvent("flag:updated", savedFlag);
         return savedFlag;
     }
 
@@ -106,7 +106,7 @@ public class ApiController {
                         flag.setDescription((String) body.get("description"));
                     }
                     FeatureFlag updated = featureFlagRepository.save(flag);
-                    messagingTemplate.convertAndSend("/topic/flags", updated);
+                    socketIOServer.getBroadcastOperations().sendEvent("flag:updated", updated);
                     return ResponseEntity.ok(updated);
                 })
                 .orElse(ResponseEntity.notFound().build());

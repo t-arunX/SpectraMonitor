@@ -1,0 +1,16 @@
+com/spectramonitor/repository/AppRepository.class
+com/spectramonitor/model/LogEntry.class
+com/spectramonitor/repository/LogRepository.class
+com/spectramonitor/model/App.class
+com/spectramonitor/config/SocketIOConfig.class
+com/spectramonitor/model/Device$DeviceHealth.class
+com/spectramonitor/model/FeatureFlag.class
+com/spectramonitor/SpectraApplication.class
+com/spectramonitor/controller/ApiController.class
+com/spectramonitor/model/Device.class
+com/spectramonitor/socket/SignalHandler.class
+com/spectramonitor/repository/CrashReportRepository.class
+com/spectramonitor/repository/FeatureFlagRepository.class
+com/spectramonitor/config/CorsConfig.class
+com/spectramonitor/repository/DeviceRepository.class
+com/spectramonitor/model/CrashReport.class

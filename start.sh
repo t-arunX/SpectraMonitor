@@ -12,6 +12,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # Kill any existing backend processes
+pkill -f "java.*backend" 2>/dev/null || true
 pkill -f "node.*backend/index.js" 2>/dev/null || true
 
 # Start MongoDB in the background
@@ -29,15 +30,15 @@ fi
 # Wait for MongoDB to be ready
 sleep 2
 
-# Start backend server in the background
-echo "Starting backend server..."
+# Start Spring Boot backend server in the background
+echo "Starting Spring Boot backend server..."
 cd backend
-node index.js &
+java -jar target/backend-0.0.1-SNAPSHOT.jar &
 BACKEND_PID=$!
 cd ..
 
 # Wait for backend to initialize
-sleep 2
+sleep 5
 
 # Start frontend dev server (this blocks)
 echo "Starting frontend..."

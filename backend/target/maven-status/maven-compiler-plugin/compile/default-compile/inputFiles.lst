@@ -1,0 +1,16 @@
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/config/CorsConfig.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/LogEntry.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/App.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/controller/ApiController.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/Device.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/repository/LogRepository.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/SpectraApplication.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/FeatureFlag.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/repository/FeatureFlagRepository.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/AppDefinition.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/socket/SignalHandler.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/repository/DeviceRepository.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/repository/AppRepository.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/model/CrashReport.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/config/SocketIOConfig.java
+/home/runner/workspace/backend/src/main/java/com/spectramonitor/repository/CrashReportRepository.java
