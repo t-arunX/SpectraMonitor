@@ -8,9 +8,8 @@ const { App, Device, Log, CrashReport, FeatureFlag } = require('./models');
 const crypto = require('crypto');
 
 // --- Configuration ---
-// Updated to 8080 to match frontend apiClient expectations
-const PORT = process.env.PORT || 8080;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/spectramonitor';
+const PORT = process.env.BACKEND_PORT || 8080;
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/spectramonitor';
 
 // --- Setup ---
 const app = express();
