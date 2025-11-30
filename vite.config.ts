@@ -9,6 +9,8 @@ export default defineConfig(({ mode }) => {
         port: 5000,
         host: '0.0.0.0',
         hmr: {
+          protocol: 'wss',
+          host: process.env.REPLIT_DEV_DOMAIN,
           clientPort: 443,
         },
       },
