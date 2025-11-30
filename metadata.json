@@ -1,0 +1,5 @@
+{
+  "name": "SpectraMonitor",
+  "description": "A production-grade application monitoring dashboard featuring live screen mirroring, real-time logs, AI-powered log analysis, and multi-session tab management.",
+  "requestFramePermissions": []
+}
