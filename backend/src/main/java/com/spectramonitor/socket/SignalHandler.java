@@ -1,18 +1,15 @@
 package com.spectramonitor.socket;
 
 import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.SocketIOClient;
 import com.spectramonitor.model.Device;
 import com.spectramonitor.model.LogEntry;
 import com.spectramonitor.repository.DeviceRepository;
 import com.spectramonitor.repository.LogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
 import jakarta.annotation.PreDestroy;
 import java.util.Date;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @Component
 public class SignalHandler implements CommandLineRunner {
