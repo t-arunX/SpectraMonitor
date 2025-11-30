@@ -4,3 +4,43 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+packages = ["mongodb"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SpectraMonitor"
+
+[[workflows.workflow]]
+name = "SpectraMonitor"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash start.sh"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[userenv]
+
+[userenv.shared]
+VITE_BACKEND_URL = "http://localhost:8080"
+BACKEND_PORT = "8080"
+MONGO_URI = "mongodb://localhost:27017/spectramonitor"
