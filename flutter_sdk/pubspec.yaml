@@ -1,0 +1,23 @@
+
+name: spectra_monitor
+description: A production-grade monitoring SDK for Flutter applications connecting to SpectraMonitor.
+version: 1.0.0
+homepage: https://spectramonitor.io
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  socket_io_client: ^2.0.3
+  device_info_plus: ^10.1.0
+  package_info_plus: ^5.0.1
+  uuid: ^4.2.2
+  screenshot: ^3.0.0 # Used for frame capture
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
