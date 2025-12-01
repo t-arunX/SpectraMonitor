@@ -153,6 +153,8 @@ const DeviceSession: React.FC<DeviceSessionProps> = ({ device, onToggleTheme, is
       }, 1000);
   };
 
+  const healthScore = device.health?.score ?? 85;
+  
   const OverviewTab = () => (
     <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
         <div className="bg-white dark:bg-[#1e293b] rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700/50">
@@ -160,20 +162,19 @@ const DeviceSession: React.FC<DeviceSessionProps> = ({ device, onToggleTheme, is
                 <Activity className="text-[#607AD6]" /> App Health Score
             </h3>
             <div className="flex items-end gap-2 mb-2">
-                <span className="text-5xl font-bold text-slate-900 dark:text-white">{device.health.score}</span>
+                <span className="text-5xl font-bold text-slate-900 dark:text-white">{healthScore}</span>
                 <span className="text-slate-500 dark:text-slate-400 mb-1">/ 100</span>
             </div>
             <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden mb-6">
-                <div className="h-full bg-[#607AD6]" style={{ width: `${device.health.score}%` }}></div>
+                <div className="h-full bg-[#607AD6]" style={{ width: `${healthScore}%` }}></div>
             </div>
         </div>
-        
         <div className="space-y-6">
-             <div className="bg-white dark:bg-[#1e293b] rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700/50 h-[180px] flex flex-col">
+            <div className="bg-white dark:bg-[#1e293b] rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700/50 h-[180px] flex flex-col">
                 <div className="flex justify-between items-center mb-2">
-                     <h3 className="text-md font-semibold text-slate-900 dark:text-white flex items-center gap-2"><Wifi size={16}/> Network Quality</h3>
+                    <h3 className="text-md font-semibold text-slate-900 dark:text-white flex items-center gap-2"><Wifi size={16}/> Network Quality</h3>
                 </div>
-             </div>
+            </div>
         </div>
     </div>
   );
