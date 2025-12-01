@@ -32,6 +32,12 @@ public class ApiController {
     private CrashReportRepository crashReportRepository;
 
     @Autowired
+    private PerformanceMetricRepository performanceMetricRepository;
+
+    @Autowired
+    private NetworkRequestRepository networkRequestRepository;
+
+    @Autowired
     private SocketIOServer socketIOServer;
 
     @GetMapping("/apps")
@@ -52,6 +58,14 @@ public class ApiController {
         
         App savedApp = appRepository.save(app);
         return ResponseEntity.status(201).body(savedApp);
+    }
+
+    @DeleteMapping("/apps/{appId}")
+    public ResponseEntity<Void> deleteApp(@PathVariable String appId) {
+        appRepository.deleteById(appId);
+        deviceRepository.deleteByAppId(appId);
+        socketIOServer.getBroadcastOperations().sendEvent("app:deleted", Map.of("id", appId));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/apps/{appId}/devices")
@@ -165,5 +179,55 @@ public class ApiController {
     @GetMapping("/devices/{deviceId}/crashes")
     public List<CrashReport> getCrashes(@PathVariable String deviceId) {
         return crashReportRepository.findAll();
+    }
+
+    @PostMapping("/devices/{deviceId}/metrics")
+    public ResponseEntity<PerformanceMetric> addMetric(@PathVariable String deviceId, @RequestBody Map<String, Object> body) {
+        PerformanceMetric metric = new PerformanceMetric();
+        metric.setDeviceId(deviceId);
+        metric.setCpuUsage(((Number) body.getOrDefault("cpuUsage", 0)).doubleValue());
+        metric.setMemoryUsage(((Number) body.getOrDefault("memoryUsage", 0)).doubleValue());
+        metric.setBatteryLevel(((Number) body.getOrDefault("batteryLevel", 100)).doubleValue());
+        metric.setTemperature(((Number) body.getOrDefault("temperature", 35)).intValue());
+        metric.setFps(((Number) body.getOrDefault("fps", 60L)).longValue());
+        metric.setUploadSpeed(((Number) body.getOrDefault("uploadSpeed", 0L)).longValue());
+        metric.setDownloadSpeed(((Number) body.getOrDefault("downloadSpeed", 0L)).longValue());
+        PerformanceMetric saved = performanceMetricRepository.save(metric);
+        socketIOServer.getBroadcastOperations().sendEvent("metric:new", saved);
+        return ResponseEntity.status(201).body(saved);
+    }
+
+    @GetMapping("/devices/{deviceId}/metrics")
+    public List<PerformanceMetric> getMetrics(@PathVariable String deviceId,
+                                              @RequestParam(defaultValue = "50") int limit) {
+        return performanceMetricRepository.findByDeviceIdOrderByTimestampDesc(
+                deviceId,
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
+    }
+
+    @PostMapping("/devices/{deviceId}/network")
+    public ResponseEntity<NetworkRequest> addNetworkRequest(@PathVariable String deviceId, @RequestBody Map<String, Object> body) {
+        NetworkRequest request = new NetworkRequest();
+        request.setDeviceId(deviceId);
+        request.setMethod((String) body.getOrDefault("method", "GET"));
+        request.setUrl((String) body.get("url"));
+        request.setStatusCode(((Number) body.getOrDefault("statusCode", 200)).intValue());
+        request.setDuration(((Number) body.getOrDefault("duration", 0L)).longValue());
+        request.setRequestSize(((Number) body.getOrDefault("requestSize", 0L)).longValue());
+        request.setResponseSize(((Number) body.getOrDefault("responseSize", 0L)).longValue());
+        request.setError((String) body.getOrDefault("error", ""));
+        NetworkRequest saved = networkRequestRepository.save(request);
+        socketIOServer.getBroadcastOperations().sendEvent("network:request", saved);
+        return ResponseEntity.status(201).body(saved);
+    }
+
+    @GetMapping("/devices/{deviceId}/network")
+    public List<NetworkRequest> getNetworkRequests(@PathVariable String deviceId,
+                                                   @RequestParam(defaultValue = "100") int limit) {
+        return networkRequestRepository.findByDeviceIdOrderByTimestampDesc(
+                deviceId,
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"))
+        );
     }
 }

@@ -36,6 +36,14 @@ class ApiClient {
     return res.json();
   }
 
+  async deleteApp(appId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/apps/${appId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) throw new Error('Failed to delete app');
+  }
+
   async getDevices(appId: string): Promise<Device[]> {
     try {
       const res = await fetch(`${API_URL}/apps/${appId}/devices`);

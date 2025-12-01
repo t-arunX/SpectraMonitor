@@ -42,15 +42,23 @@ backend/
 │   │   ├── SocketIOConfig.java      # Netty-socketio configuration
 │   │   └── CorsConfig.java          # CORS configuration
 │   ├── controller/
-│   │   └── ApiController.java       # REST API endpoints
+│   │   └── ApiController.java       # REST API endpoints (CRUD + delete app)
 │   ├── model/
 │   │   ├── App.java                 # Application model
 │   │   ├── Device.java              # Device model
 │   │   ├── LogEntry.java            # Log entry model
 │   │   ├── FeatureFlag.java         # Feature flag model
-│   │   └── CrashReport.java         # Crash report model
+│   │   ├── CrashReport.java         # Crash report model
+│   │   ├── PerformanceMetric.java   # Performance metrics (CPU, memory, battery, FPS, etc.)
+│   │   └── NetworkRequest.java      # Network request tracking
 │   ├── repository/
-│   │   └── *Repository.java         # MongoDB repositories
+│   │   ├── AppRepository.java
+│   │   ├── DeviceRepository.java    # Includes deleteByAppId
+│   │   ├── LogRepository.java
+│   │   ├── CrashReportRepository.java
+│   │   ├── FeatureFlagRepository.java
+│   │   ├── PerformanceMetricRepository.java
+│   │   └── NetworkRequestRepository.java
 │   └── socket/
 │       └── SignalHandler.java       # Socket.IO event handlers
 └── pom.xml                          # Maven dependencies
@@ -66,13 +74,17 @@ backend/
 - **Deployment**: VM deployment target (always-on for WebSocket support)
 
 ## Features
-- **App Onboarding**: Create and manage multiple mobile applications
+- **App Management**: Create, view, and delete applications
 - **Device Monitoring**: Real-time device session tracking
 - **Log Viewer**: Live log streaming with anomaly detection
+- **Crash Reporting**: Track and analyze app crashes
+- **Performance Metrics**: Monitor CPU, memory, battery, temperature, FPS, network speed
+- **Network Tracking**: Log HTTP requests with status codes, duration, and payload sizes
 - **Screen Mirroring**: Real-time screen capture (when SDK is integrated)
 - **Feature Flags**: Remote configuration management
 - **Analytics Dashboard**: App performance metrics and visualizations
 - **AI-Powered Insights**: Gemini integration for log analysis
+- **Dark Mode**: Improved dark theme with better color contrast
 
 ## Development
 - **Start Development**: Workflow automatically starts all services
@@ -80,12 +92,14 @@ backend/
 - **Frontend**: Hot module reload enabled via Vite
 - **Backend Build**: `cd backend && mvn clean package -DskipTests`
 
-## Recent Changes (Nov 30, 2025)
-- **Backend Migration**: Converted from Node.js/Express to Java Spring Boot
-- **Socket.IO Compatibility**: Using netty-socketio library to maintain Socket.IO protocol
-- **Architecture Split**: REST API on Tomcat (9090), Socket.IO on Netty (8080)
-- **Vite Proxy**: Added proxy configuration for API calls to Spring Boot
-- **Updated startup script**: Now runs Java JAR instead of Node.js
+## Recent Changes (Dec 01, 2025)
+- **Delete App Feature**: Added DELETE /api/apps/{appId} endpoint with UI button
+- **Performance Metrics Tracking**: POST/GET endpoints for CPU, memory, battery, FPS monitoring
+- **Network Request Logging**: POST/GET endpoints for HTTP request tracking
+- **Better Dark Mode Colors**: Improved color palette with better contrast
+- **App Icon Navigation**: Added back button to navigate from device list to app selector
+- **Removed Dummy Data**: Cleaned up placeholder text and form defaults
+- **API Documentation**: Created comprehensive API_DOCUMENTATION.md with curl examples
 
 ## Architecture
 - **Frontend-Backend Communication**: REST API (proxied via Vite) + Socket.IO (direct connection)

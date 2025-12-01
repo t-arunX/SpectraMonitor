@@ -216,6 +216,10 @@ const App: React.FC = () => {
                 apps={apps} 
                 onSelect={(id) => setSelectedAppId(id)} 
                 onCreate={() => setIsOnboarding(true)}
+                onAppDeleted={(deletedId) => {
+                  setApps(prev => prev.filter(a => a.id !== deletedId));
+                  if (selectedAppId === deletedId) setSelectedAppId(null);
+                }}
               />
           </div>
       );
