@@ -5,7 +5,7 @@ import { apiClient } from '../services/apiClient';
 
 interface DeviceListProps {
   devices: Device[];
-  onSelectDevice: (device: Device) => true
+  onSelectDevice: (device: Device) => void;
   appName: string;
   appId: string;
   className?: string;
