@@ -5,7 +5,7 @@ import { apiClient } from '../services/apiClient';
 
 interface DeviceListProps {
   devices: Device[];
-  onSelectDevice: (device: Device) => void;
+  onSelectDevice: (device: Device) => true
   appName: string;
   appId: string;
   className?: string;
@@ -18,9 +18,9 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appNam
   const [showAddModal, setShowAddModal] = React.useState(false);
   const [isCreating, setIsCreating] = React.useState(false);
   const [formData, setFormData] = React.useState({
-    userName: '',
-    model: 'iPhone 14',
-    osVersion: '17.0'
+    userName: '-',
+    model: '--',
+    osVersion: '--'
   });
 
   const handleAddDevice = async () => {
