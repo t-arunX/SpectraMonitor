@@ -1,13 +1,14 @@
 import { AppDefinition, Device, LogEntry, FeatureFlag } from '../types';
-import { io, Socket } from 'socket.io-client';
 
-const API_URL = 'http://localhost:9090/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:9091';
+const API_URL = '/api';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:9090/ws';
 
 class ApiClient {
-  private socket: Socket | null = null;
+  private socket: WebSocket | null = null;
   private logCallbacks: ((log: LogEntry) => void)[] = [];
   private screenCallbacks: ((base64: string) => void)[] = [];
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
 
   constructor() {
     // Lazy connection on usage
@@ -88,64 +89,101 @@ class ApiClient {
     return res.json();
   }
 
-  // --- Real-time Methods (Socket.IO for Node Backend) ---
+  // --- Real-time Methods (Native WebSocket) ---
 
   connectSocket() {
-    if (this.socket?.connected) return;
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
 
-    this.socket = io(SOCKET_URL, {
-        transports: ['websocket']
-    });
+    try {
+      this.socket = new WebSocket(WS_URL);
 
-    this.socket.on('connect', () => {
-      console.log('✅ Socket.IO Connected');
-    });
+      this.socket.onopen = () => {
+        console.log('✅ WebSocket Connected');
+        this.reconnectAttempts = 0;
+      };
 
-    this.socket.on('log:new', (log: LogEntry) => {
-        this.logCallbacks.forEach(cb => cb(log));
-    });
+      this.socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          const { event: eventName, data } = message;
 
-    this.socket.on('screen:frame', (base64: string) => {
-        this.screenCallbacks.forEach(cb => cb(base64));
-    });
+          if (eventName === 'log:new') {
+            this.logCallbacks.forEach(cb => cb(data));
+          } else if (eventName === 'screen:frame') {
+            this.screenCallbacks.forEach(cb => cb(data));
+          }
+        } catch (e) {
+          console.error('Error parsing WebSocket message:', e);
+        }
+      };
 
-    this.socket.on('disconnect', () => {
-      console.log('❌ Socket.IO Disconnected');
-    });
+      this.socket.onerror = (error) => {
+        console.error('❌ WebSocket Error:', error);
+      };
+
+      this.socket.onclose = () => {
+        console.log('❌ WebSocket Disconnected');
+        this.attemptReconnect();
+      };
+    } catch (e) {
+      console.error('Failed to connect WebSocket:', e);
+      this.attemptReconnect();
+    }
+  }
+
+  private attemptReconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
+      setTimeout(() => this.connectSocket(), delay);
+    }
   }
 
   joinDeviceSession(deviceId: string) {
     this.ensureConnection(() => {
-      this.socket?.emit('join_device_session', deviceId);
+      this.sendMessage('join_device_session', { deviceId });
     });
   }
 
   onNewLog(callback: (log: LogEntry) => void) {
     this.logCallbacks.push(callback);
-    // Return unsubscribe function if needed, but for now simple push
     return () => {
-        this.logCallbacks = this.logCallbacks.filter(cb => cb !== callback);
+      this.logCallbacks = this.logCallbacks.filter(cb => cb !== callback);
     };
   }
 
   onScreenFrame(callback: (base64: string) => void) {
     this.screenCallbacks.push(callback);
     return () => {
-        this.screenCallbacks = this.screenCallbacks.filter(cb => cb !== callback);
+      this.screenCallbacks = this.screenCallbacks.filter(cb => cb !== callback);
     };
   }
 
   disconnectSocket() {
-    this.socket?.disconnect();
-    this.socket = null;
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
+    }
     this.logCallbacks = [];
     this.screenCallbacks = [];
   }
 
+  private sendMessage(event: string, data: unknown) {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({ event, data }));
+    }
+  }
+
   private ensureConnection(action: () => void) {
-    if (!this.socket || !this.socket.connected) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       this.connectSocket();
-      this.socket?.once('connect', action);
+      const checkConnection = setInterval(() => {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+          clearInterval(checkConnection);
+          action();
+        }
+      }, 100);
+      setTimeout(() => clearInterval(checkConnection), 5000);
     } else {
       action();
     }

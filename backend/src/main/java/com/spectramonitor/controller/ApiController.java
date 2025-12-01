@@ -1,6 +1,5 @@
 package com.spectramonitor.controller;
 
-import com.corundumstudio.socketio.SocketIOServer;
 import com.spectramonitor.model.*;
 import com.spectramonitor.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,6 @@ public class ApiController {
     @Autowired
     private NetworkRequestRepository networkRequestRepository;
 
-    @Autowired
-    private SocketIOServer socketIOServer;
-
     @GetMapping("/apps")
     public List<App> getApps() {
         return appRepository.findAll();
@@ -64,7 +60,6 @@ public class ApiController {
     public ResponseEntity<Void> deleteApp(@PathVariable String appId) {
         appRepository.deleteById(appId);
         deviceRepository.deleteByAppId(appId);
-        socketIOServer.getBroadcastOperations().sendEvent("app:deleted", Map.of("id", appId));
         return ResponseEntity.noContent().build();
     }
 
@@ -87,8 +82,6 @@ public class ApiController {
         device.setLastSeen(new Date());
         
         Device savedDevice = deviceRepository.save(device);
-        socketIOServer.getBroadcastOperations().sendEvent("device:update", 
-            Map.of("id", device.getDeviceId(), "status", "online"));
         return ResponseEntity.status(201).body(savedDevice);
     }
 
@@ -118,7 +111,6 @@ public class ApiController {
     @PostMapping("/flags")
     public FeatureFlag createFlag(@RequestBody FeatureFlag flag) {
         FeatureFlag savedFlag = featureFlagRepository.save(flag);
-        socketIOServer.getBroadcastOperations().sendEvent("flag:updated", savedFlag);
         return savedFlag;
     }
 
@@ -139,7 +131,6 @@ public class ApiController {
                         flag.setDescription((String) body.get("description"));
                     }
                     FeatureFlag updated = featureFlagRepository.save(flag);
-                    socketIOServer.getBroadcastOperations().sendEvent("flag:updated", updated);
                     return ResponseEntity.ok(updated);
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -155,7 +146,6 @@ public class ApiController {
         log.setTimestamp((String) body.getOrDefault("timestamp", new Date().toString()));
         log.setIsAnomaly((Boolean) body.getOrDefault("isAnomaly", false));
         LogEntry saved = logRepository.save(log);
-        socketIOServer.getBroadcastOperations().sendEvent("log:new", saved);
         return ResponseEntity.status(201).body(saved);
     }
 
@@ -174,7 +164,6 @@ public class ApiController {
         crash.setUsersCount((Integer) body.getOrDefault("usersCount", 1));
         crash.setTimestamp(new Date().toString());
         CrashReport saved = crashReportRepository.save(crash);
-        socketIOServer.getBroadcastOperations().sendEvent("crash:new", saved);
         return ResponseEntity.status(201).body(saved);
     }
 
@@ -195,7 +184,6 @@ public class ApiController {
         metric.setUploadSpeed(((Number) body.getOrDefault("uploadSpeed", 0L)).longValue());
         metric.setDownloadSpeed(((Number) body.getOrDefault("downloadSpeed", 0L)).longValue());
         PerformanceMetric saved = performanceMetricRepository.save(metric);
-        socketIOServer.getBroadcastOperations().sendEvent("metric:new", saved);
         return ResponseEntity.status(201).body(saved);
     }
 
@@ -220,7 +208,6 @@ public class ApiController {
         request.setResponseSize(((Number) body.getOrDefault("responseSize", 0L)).longValue());
         request.setError((String) body.getOrDefault("error", ""));
         NetworkRequest saved = networkRequestRepository.save(request);
-        socketIOServer.getBroadcastOperations().sendEvent("network:request", saved);
         return ResponseEntity.status(201).body(saved);
     }
 

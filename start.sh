@@ -30,8 +30,8 @@ fi
 # Wait for MongoDB to be ready
 sleep 2
 
-# Start Spring Boot backend server in the background
-echo "Starting Spring Boot backend server..."
+# Start Spring Boot backend server in the background (Tomcat on 9090, WebSocket on /ws)
+echo "Starting Spring Boot backend server with WebSocket support..."
 cd backend
 java -jar target/backend-0.0.1-SNAPSHOT.jar &
 BACKEND_PID=$!

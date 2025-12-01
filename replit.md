@@ -9,17 +9,16 @@ SpectraMonitor is a real-time mobile application monitoring platform that provid
 - **Framework**: React 19.2.0 + TypeScript
 - **Build Tool**: Vite 6.2.0
 - **UI Libraries**: Tailwind CSS (via CDN), Lucide React (icons), Recharts (charts)
-- **Real-time**: Socket.IO Client
+- **Real-time**: Native WebSocket
 - **AI Integration**: Google Generative AI (Gemini)
 
 ### Backend (Java Spring Boot)
 - **Framework**: Spring Boot 3.2.0
 - **Database**: MongoDB with Spring Data MongoDB
-- **Real-time**: netty-socketio 2.0.11 (Socket.IO server for Java)
+- **Real-time**: Spring WebSocket (native Tomcat support)
 - **Build Tool**: Maven
 - **Ports**:
-  - REST API: 9090 (Spring Boot/Tomcat)
-  - Socket.IO: 8080 (Netty)
+  - REST API + WebSocket: 9090 (Spring Boot/Tomcat)
   - Frontend: 5000 (Vite)
 
 ### Additional Components
@@ -67,9 +66,10 @@ backend/
 ### Replit Configuration
 - **Workflow**: Single workflow (`SpectraMonitor`) runs `start.sh` which:
   1. Starts MongoDB on port 27017
-  2. Starts Spring Boot backend (REST on 9090, Socket.IO on 8080)
+  2. Starts Spring Boot backend (REST on 9090, WebSocket at /ws)
   3. Starts Vite dev server on port 5000
 - **Frontend Proxy**: Vite proxies `/api` requests to Spring Boot (port 9090)
+- **WebSocket**: Native Tomcat WebSocket at `ws://localhost:9090/ws`
 - **HMR**: Configured for Replit proxy with WSS protocol
 - **Deployment**: VM deployment target (always-on for WebSocket support)
 
@@ -93,20 +93,21 @@ backend/
 - **Backend Build**: `cd backend && mvn clean package -DskipTests`
 
 ## Recent Changes (Dec 01, 2025)
+- **Tomcat-only Architecture**: Removed netty-socketio, switched to pure Spring Boot WebSocket
+- **Single Port Operation**: Everything now runs on port 9090 (REST API + WebSocket at /ws)
+- **Native WebSocket**: Frontend uses native WebSocket instead of Socket.IO protocol
+- **Simplified Deployment**: No separate port needed for real-time communication
 - **Delete App Feature**: Added DELETE /api/apps/{appId} endpoint with UI button
 - **Performance Metrics Tracking**: POST/GET endpoints for CPU, memory, battery, FPS monitoring
 - **Network Request Logging**: POST/GET endpoints for HTTP request tracking
-- **Better Dark Mode Colors**: Improved color palette with better contrast
-- **App Icon Navigation**: Added back button to navigate from device list to app selector
-- **Removed Dummy Data**: Cleaned up placeholder text and form defaults
-- **API Documentation**: Created comprehensive API_DOCUMENTATION.md with curl examples
 
 ## Architecture
-- **Frontend-Backend Communication**: REST API (proxied via Vite) + Socket.IO (direct connection)
+- **Frontend-Backend Communication**: REST API (proxied via Vite) + Native WebSocket (direct connection to 9090/ws)
 - **Database**: MongoDB with Spring Data MongoDB
-- **Real-time Updates**: netty-socketio with room support for device sessions
+- **Real-time Updates**: Spring WebSocket with room support for device sessions (no external dependencies)
 - **State Management**: React hooks (useState, useEffect)
 - **Routing**: Tab-based navigation system (no router library)
+- **WebSocket Protocol**: Native browser WebSocket with custom JSON message protocol
 
 ## Building the Backend
 ```bash
@@ -117,4 +118,5 @@ mvn clean package -DskipTests
 ## Notes
 - Tailwind CSS is loaded via CDN (development only, should migrate to PostCSS for production)
 - Original Node.js backend remains in `backend/index.js` for reference
-- Frontend uses relative `/api` URLs (proxied to 9090) for REST, absolute URL for Socket.IO (8080)
+- Frontend uses relative `/api` URLs for REST (proxied to 9090) and native WebSocket for real-time (`ws://localhost:9090/ws`)
+- All backend real-time communication now goes through native Spring WebSocket - no external dependencies needed

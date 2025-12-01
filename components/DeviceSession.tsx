@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Device, LogEntry, CrashReport, ChatSession, NetworkRequest } from '../types';
 import ScreenMirror from './ScreenMirror';
 import LogViewer from './LogViewer';
-import CrashView from './logs/crash';
 import { apiClient } from '../services/apiClient';
 import { getPerformanceTips } from '../services/geminiService';
 import {
