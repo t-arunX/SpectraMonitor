@@ -128,4 +128,42 @@ public class ApiController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/devices/{deviceId}/logs")
+    public ResponseEntity<LogEntry> addLog(@PathVariable String deviceId, @RequestBody Map<String, Object> body) {
+        LogEntry log = new LogEntry();
+        log.setDeviceId(deviceId);
+        log.setLevel((String) body.getOrDefault("level", "info"));
+        log.setMessage((String) body.get("message"));
+        log.setTag((String) body.getOrDefault("tag", "app"));
+        log.setTimestamp((String) body.getOrDefault("timestamp", new Date().toString()));
+        log.setIsAnomaly((Boolean) body.getOrDefault("isAnomaly", false));
+        LogEntry saved = logRepository.save(log);
+        socketIOServer.getBroadcastOperations().sendEvent("log:new", saved);
+        return ResponseEntity.status(201).body(saved);
+    }
+
+    @PostMapping("/devices/{deviceId}/crashes")
+    public ResponseEntity<CrashReport> addCrash(@PathVariable String deviceId, @RequestBody Map<String, Object> body) {
+        CrashReport crash = new CrashReport();
+        crash.setId("crash_" + System.currentTimeMillis());
+        crash.setAppId((String) body.getOrDefault("appId", ""));
+        crash.setType((String) body.getOrDefault("type", "Exception"));
+        crash.setTitle((String) body.get("title"));
+        crash.setSubtitle((String) body.getOrDefault("subtitle", ""));
+        crash.setError((String) body.get("error"));
+        crash.setStackTrace((String) body.getOrDefault("stackTrace", ""));
+        crash.setAffectedFile((String) body.getOrDefault("affectedFile", ""));
+        crash.setEventsCount((Integer) body.getOrDefault("eventsCount", 1));
+        crash.setUsersCount((Integer) body.getOrDefault("usersCount", 1));
+        crash.setTimestamp(new Date().toString());
+        CrashReport saved = crashReportRepository.save(crash);
+        socketIOServer.getBroadcastOperations().sendEvent("crash:new", saved);
+        return ResponseEntity.status(201).body(saved);
+    }
+
+    @GetMapping("/devices/{deviceId}/crashes")
+    public List<CrashReport> getCrashes(@PathVariable String deviceId) {
+        return crashReportRepository.findAll();
+    }
 }
