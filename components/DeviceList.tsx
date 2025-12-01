@@ -1,6 +1,6 @@
 import React from 'react';
 import { Device } from '../types';
-import { Smartphone, Signal, WifiOff, Search, Plus, X } from 'lucide-react';
+import { Smartphone, Signal, WifiOff, Search, Plus, X, ArrowLeft } from 'lucide-react';
 import { apiClient } from '../services/apiClient';
 
 interface DeviceListProps {
@@ -11,16 +11,17 @@ interface DeviceListProps {
   className?: string;
   isLoading?: boolean;
   onDeviceAdded?: (device: Device) => void;
+  onNavigateBack?: () => void;
 }
 
-const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appName, appId, className, isLoading, onDeviceAdded }) => {
+const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appName, appId, className, isLoading, onDeviceAdded, onNavigateBack }) => {
   const [search, setSearch] = React.useState('');
   const [showAddModal, setShowAddModal] = React.useState(false);
   const [isCreating, setIsCreating] = React.useState(false);
   const [formData, setFormData] = React.useState({
-    userName: '-',
-    model: '--',
-    osVersion: '--'
+    userName: '',
+    model: '',
+    osVersion: ''
   });
 
   const handleAddDevice = async () => {
@@ -68,7 +69,16 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appNam
     <div className={`w-80 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full transition-colors ${className}`}>
       <div className="p-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex justify-between items-center mb-1">
-          <h2 className="text-slate-900 dark:text-slate-100 font-semibold">{appName}</h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onNavigateBack}
+              className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+              title="Back to Apps"
+            >
+              <ArrowLeft size={16} className="text-slate-600 dark:text-slate-400" />
+            </button>
+            <h2 className="text-slate-900 dark:text-slate-100 font-semibold">{appName}</h2>
+          </div>
           <button
             onClick={() => setShowAddModal(true)}
             className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"

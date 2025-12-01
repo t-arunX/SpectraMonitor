@@ -284,6 +284,7 @@ const App: React.FC = () => {
             onDeviceAdded={handleDeviceAdded}
             className="h-full shadow-xl md:shadow-none"
             isLoading={isLoadingDevices}
+            onNavigateBack={() => setShowAppSelector(true)}
             />
          ) : (
             <div className="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400">
