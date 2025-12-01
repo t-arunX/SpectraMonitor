@@ -195,11 +195,18 @@ const DeviceSession: React.FC<DeviceSessionProps> = ({ device, onToggleTheme, is
 
         <div className="flex items-center gap-2">
             {/* Tab Navigation */}
-            <div className="flex bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl overflow-x-auto no-scrollbar max-w-[200px] sm:max-w-md lg:max-w-xl">
+            <div className="flex bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl overflow-x-auto no-scrollbar max-w-[200px] sm:max-w-md lg:max-w-2xl">
                  {[
                      { id: 'overview', icon: Activity, label: 'Overview' },
                      { id: 'screen', icon: Monitor, label: 'Screen' },
                      { id: 'logs', icon: Terminal, label: 'Logs' },
+                     { id: 'network', icon: Wifi, label: 'Network' },
+                     { id: 'database', icon: Database, label: 'Database' },
+                     { id: 'crashes', icon: AlertOctagon, label: 'Crashes' },
+                     { id: 'files', icon: Folder, label: 'Files' },
+                     { id: 'chat', icon: MessageSquare, label: 'Chat' },
+                     { id: 'journey', icon: Footprints, label: 'Journey' },
+                     { id: 'tools', icon: Wrench, label: 'Tools' },
                  ].map(tab => (
                      <button
                         key={tab.id}
@@ -249,6 +256,78 @@ const DeviceSession: React.FC<DeviceSessionProps> = ({ device, onToggleTheme, is
             </div>
         )}
         {activeTab === 'logs' && <LogViewer logs={logs} isPaused={isPaused} setPaused={setPaused} onClear={() => setLogs([])} isLoading={isLoadingLogs} />}
+        
+        {activeTab === 'network' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Network Performance</h2>
+                {networkRequests.length === 0 ? (
+                    <div className="text-slate-500 dark:text-slate-400">No network requests captured</div>
+                ) : (
+                    <div className="space-y-4">
+                        {networkRequests.map((req, i) => (
+                            <div key={i} className="bg-white dark:bg-[#1e293b] p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <p className="font-mono text-sm text-slate-900 dark:text-white">{req.url}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{req.method} • {req.status} • {req.duration}ms</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        )}
+        
+        {activeTab === 'database' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Local Database</h2>
+                {dbData.length === 0 ? (
+                    <div className="text-slate-500 dark:text-slate-400">No database records</div>
+                ) : (
+                    <div className="space-y-2">
+                        {dbData.map((node, i) => (
+                            <DBNode key={i} node={node} editingNode={editingNode} setEditingNode={setEditingNode} handleUpdateNode={(k, v) => {}} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        )}
+        
+        {activeTab === 'crashes' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Crash Reports</h2>
+                <div className="text-slate-500 dark:text-slate-400">No crashes recorded</div>
+            </div>
+        )}
+        
+        {activeTab === 'files' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">File System</h2>
+                <div className="text-slate-500 dark:text-slate-400">File system explorer</div>
+            </div>
+        )}
+        
+        {activeTab === 'chat' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Chat & Support</h2>
+                <div className="text-slate-500 dark:text-slate-400">Chat with device owner</div>
+            </div>
+        )}
+        
+        {activeTab === 'journey' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">User Journey</h2>
+                <div className="text-slate-500 dark:text-slate-400">User interaction timeline</div>
+            </div>
+        )}
+        
+        {activeTab === 'tools' && (
+            <div className="p-6 overflow-auto">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Developer Tools</h2>
+                <div className="space-y-4">
+                    <button className="px-4 py-2 bg-[#607AD6] text-white rounded-lg hover:bg-blue-600">Clear App Cache</button>
+                    <button className="px-4 py-2 bg-[#607AD6] text-white rounded-lg hover:bg-blue-600">View Device Info</button>
+                    <button className="px-4 py-2 bg-[#607AD6] text-white rounded-lg hover:bg-blue-600">Export Logs</button>
+                </div>
+            </div>
+        )}
       </div>
     </div>
   );
