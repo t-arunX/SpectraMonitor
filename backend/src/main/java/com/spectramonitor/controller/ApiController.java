@@ -70,13 +70,15 @@ public class ApiController {
 
     @GetMapping("/apps/{appId}/devices")
     public List<Device> getDevices(@PathVariable String appId) {
-        return deviceRepository.findByAppId(appId);
+        List<Device> devices = deviceRepository.findByAppId(appId);
+        devices.stream().forEach(device -> System.out.println(device.getDeviceId()));
+        return devices;
     }
 
     @PostMapping("/apps/{appId}/devices")
     public ResponseEntity<Device> createDevice(@PathVariable String appId, @RequestBody Map<String, Object> body) {
         Device device = new Device();
-        device.setId((String) body.getOrDefault("id", "device_" + System.currentTimeMillis()));
+        device.setDeviceId((String) body.getOrDefault("id", "device_" + System.currentTimeMillis()));
         device.setAppId(appId);
         device.setModel((String) body.getOrDefault("model", "Unknown"));
         device.setOsVersion((String) body.getOrDefault("osVersion", "Unknown"));
@@ -86,13 +88,13 @@ public class ApiController {
         
         Device savedDevice = deviceRepository.save(device);
         socketIOServer.getBroadcastOperations().sendEvent("device:update", 
-            Map.of("id", device.getId(), "status", "online"));
+            Map.of("id", device.getDeviceId(), "status", "online"));
         return ResponseEntity.status(201).body(savedDevice);
     }
 
     @GetMapping("/devices/{deviceId}")
     public ResponseEntity<Device> getDevice(@PathVariable String deviceId) {
-        return deviceRepository.findByIdEquals(deviceId)
+        return deviceRepository.findByDeviceIdEquals(deviceId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

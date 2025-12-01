@@ -1,8 +1,8 @@
 import { AppDefinition, Device, LogEntry, FeatureFlag } from '../types';
 import { io, Socket } from 'socket.io-client';
 
-const API_URL = '/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8080';
+const API_URL = 'http://localhost:9090/api';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:9091';
 
 class ApiClient {
   private socket: Socket | null = null;
@@ -61,8 +61,12 @@ class ApiClient {
     return res.json();
   }
 
-  async getLogs(deviceId: string): Promise<LogEntry[]> {
+  async getLogs(device: Device,deviceId: string): Promise<LogEntry[]> {
     try {
+      console.log('deviceId'+ deviceId);
+      console.log('device'+ device.userName);
+      console.log('device'+ device.batteryLevel);
+      console.log('device'+ device.osVersion);
       const res = await fetch(`${API_URL}/devices/${deviceId}/logs`);
       return res.json();
     } catch (e) { return []; }

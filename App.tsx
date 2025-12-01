@@ -115,6 +115,7 @@ const App: React.FC = () => {
       const loadDevices = async () => {
         setIsLoadingDevices(true);
         const fetchedDevices = await apiClient.getDevices(selectedAppId);
+        console.log("Fetched devices:", fetchedDevices);
         setDevices(fetchedDevices);
         setIsLoadingDevices(false);
       };
@@ -136,13 +137,14 @@ const App: React.FC = () => {
     }
   }, [selectedAppId, apps]);
 
+  
   const handleDeviceSelect = (device: Device) => {
-    const existingTab = tabs.find(t => t.id === device.id);
+    const existingTab = tabs.find(t => t.id === device.deviceId);
     if (existingTab) {
       setActiveTabId(existingTab.id);
     } else {
       const newTab: Tab = {
-        id: device.id,
+        id: device.deviceId,
         type: 'device',
         title: `${device.userName}`,
         data: device

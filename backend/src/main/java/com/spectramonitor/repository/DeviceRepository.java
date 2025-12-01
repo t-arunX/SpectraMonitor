@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface DeviceRepository extends MongoRepository<Device, String> {
     List<Device> findByAppId(String appId);
-    Optional<Device> findByIdEquals(String id);
+    Optional<Device> findByDeviceIdEquals(String id);
     void deleteByAppId(String appId);
 }

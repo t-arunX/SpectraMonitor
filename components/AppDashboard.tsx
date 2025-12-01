@@ -14,14 +14,14 @@ const AppDashboard: React.FC<AppDashboardProps> = ({ app }) => {
   const [activeTab, setActiveTab] = useState<'analytics' | 'config' | 'messaging' | 'sdk'>('analytics');
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [sdkConfig, setSdkConfig] = useState<SdkConfig>({
-      apiKey: `sk_live_${app.id}`,
-      endpoint: 'http://localhost:8080/api',
-      logLevel: 'info',
-      enableCrashReporting: true,
-      enableAnalytics: true,
-      sessionTimeout: 30
-  });
+//   const [sdkConfig, setSdkConfig] = useState<SdkConfig>({
+//       apiKey: `sk_live_${app.id}`,
+//       endpoint: 'http://localhost:8080/api',
+//       logLevel: 'info',
+//       enableCrashReporting: true,
+//       enableAnalytics: true,
+//       sessionTimeout: 30
+//   });
 
   useEffect(() => {
     const loadFlags = async () => {

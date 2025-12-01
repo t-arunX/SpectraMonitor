@@ -18,7 +18,7 @@ export interface AppHealth {
 }
 
 export interface Device {
-  id: string;
+  deviceId: string;
   appId: string;
   model: string;
   osVersion: string;

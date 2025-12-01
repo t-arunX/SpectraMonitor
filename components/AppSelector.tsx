@@ -25,6 +25,9 @@ const AppSelector: React.FC<AppSelectorProps> = ({ apps, onSelect, onCreate, onA
             }
         }
     };
+
+    onSelect(apps[0].id);
+    
     return (
         <div className="flex flex-col h-full bg-slate-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 p-8 overflow-y-auto">
             <div className="max-w-6xl mx-auto w-full">
@@ -60,7 +63,7 @@ const AppSelector: React.FC<AppSelectorProps> = ({ apps, onSelect, onCreate, onA
                             onClick={() => onSelect(app.id)}
                             className="group bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:border-[#607AD6]/50 dark:hover:border-[#7B8DDB]/50 transition-all cursor-pointer relative overflow-hidden"
                         >
-                            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                            <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                                 <button
                                     onClick={(e) => handleDelete(e, app.id)}
                                     className="p-1.5 rounded hover:bg-red-500/20 hover:text-red-500 transition-colors"

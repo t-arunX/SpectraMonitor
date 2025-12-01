@@ -24,6 +24,8 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appNam
     osVersion: ''
   });
 
+  console.log(devices);
+
   const handleAddDevice = async () => {
     if (!formData.userName.trim()) return;
     setIsCreating(true);
@@ -104,7 +106,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onSelectDevice, appNam
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {filtered.map(device => (
           <div 
-            key={device.id} 
+            key={device.deviceId} 
             onClick={() => onSelectDevice(device)}
             className="group flex items-center p-3 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:shadow-sm"
           >

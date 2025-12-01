@@ -45,7 +45,7 @@ public class SignalHandler implements CommandLineRunner {
         server.addEventListener("device:connect", Map.class, (client, deviceData, ackRequest) -> {
             String deviceId = (String) deviceData.get("id");
             
-            deviceRepository.findByIdEquals(deviceId).ifPresentOrElse(
+            deviceRepository.findByDeviceIdEquals(deviceId).ifPresentOrElse(
                 device -> {
                     device.setStatus("online");
                     device.setLastSeen(new Date());
@@ -53,7 +53,7 @@ public class SignalHandler implements CommandLineRunner {
                 },
                 () -> {
                     Device device = new Device();
-                    device.setId(deviceId);
+                    device.setDeviceId(deviceId);
                     device.setAppId((String) deviceData.get("appId"));
                     device.setModel((String) deviceData.get("model"));
                     device.setOsVersion((String) deviceData.get("osVersion"));
